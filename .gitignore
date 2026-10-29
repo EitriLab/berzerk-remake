@@ -1,0 +1,11 @@
+node_modules
+public/*.js
+public/*.map
+loaded.png
+play.png
+actual-*.png
+node_modules/
+playwright-report/
+test-results/
+public/bundle.js
+public/bundle.js.map
