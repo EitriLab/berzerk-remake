@@ -1,4 +1,4 @@
-import { Actor, Collider, CollisionContact, Engine, Side, vec } from "excalibur";
+import { Actor, Collider, CollisionContact, Engine, Side, vec, Keys} from "excalibur";
 import { Resources } from "../resources";
 
 // Actors are the main unit of composition you'll likely use, anything that you want to draw and move around the screen
@@ -15,6 +15,8 @@ import { Resources } from "../resources";
 
 
 export class Player extends Actor {
+  private velocidade = 200;
+
   constructor() {
     super({
       // Giving your actor a name is optional, but helps in debugging using the dev tools or debug mode
@@ -32,36 +34,38 @@ export class Player extends Actor {
   }
 
   override onInitialize() {
-    // Generally recommended to stick logic in the "On initialize"
-    // This runs before the first update
-    // Useful when
-    // 1. You need things to be loaded like Images for graphics
-    // 2. You need excalibur to be initialized & started 
-    // 3. Deferring logic to run time instead of constructor time
-    // 4. Lazy instantiation
     this.graphics.add(Resources.Sword.toSprite());
-
-    // Actions are useful for scripting common behavior, for example patrolling enemies
-    this.actions.delay(2000);
-    this.actions.repeatForever(ctx => {
-      ctx.moveBy({offset: vec(100, 0), duration: 1000});
-      ctx.moveBy({offset: vec(0, 100), duration: 1000});
-      ctx.moveBy({offset: vec(-100, 0), duration: 1000});
-      ctx.moveBy({offset: vec(0, -100), duration: 1000});
-    });
-
-    // Sometimes you want to click on an actor!
-    this.on('pointerdown', evt => {
-      // Pointer events tunnel in z order from the screen down, you can cancel them!
-      // if (true) {
-      //   evt.cancel();
-      // }
-      console.log('You clicked the actor @', evt.worldPos.toString());
-    });
   }
 
-  override onPreUpdate(engine: Engine, elapsedMs: number): void {
-    // Put any update logic here runs every frame before Actor builtins
+ override onPreUpdate(engine: Engine, elapsedMs: number): void {
+    const teclado = engine.input.keyboard;
+
+    let x = 0;
+    let y = 0;
+
+    // Movimento vertical
+    if (teclado.isHeld(Keys.W) || teclado.isHeld(Keys.Up)) {
+      y -= 1;
+    }
+
+    if (teclado.isHeld(Keys.S) || teclado.isHeld(Keys.Down)) {
+      y += 1;
+    }
+
+    // Movimento horizontal
+    if (teclado.isHeld(Keys.A) || teclado.isHeld(Keys.Left)) {
+      x -= 1;
+    }
+
+    if (teclado.isHeld(Keys.D) || teclado.isHeld(Keys.Right)) {
+      x += 1;
+    }
+
+    // Normaliza a velocidade diagonal
+    const direcao = vec(x, y).normalize();
+
+    // Aplica a velocidade
+    this.vel = direcao.scale(this.velocidade);
   }
 
   override onPostUpdate(engine: Engine, elapsedMs: number): void {
