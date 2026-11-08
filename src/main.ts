@@ -9,6 +9,7 @@ import { GameOverScene } from "./scenes/GameOverScene";
 const game = new Engine({
   width: 800, // Logical width and height in game pixels
   height: 600,
+  backgroundColor: Color.fromHex("#0d0a10"), // fundo fora do mapa (quase preto)
   displayMode: DisplayMode.FitScreenAndFill, // Display mode tells excalibur how to fill the window
   pixelArt: true, // pixelArt will turn on the correct settings to render pixel art without jaggies or shimmering artifacts
   scenes: {
@@ -28,7 +29,7 @@ game.start('menu', { // name of the start scene 'menu'
   inTransition: new FadeInOut({ // Optional in transition
     duration: 1000,
     direction: 'in',
-    color: Color.ExcaliburBlue
+    color: Color.Black
   })
 }).then(() => {
   // Do something after the game starts
