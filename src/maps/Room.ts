@@ -1,5 +1,5 @@
-import { Actor, Color, CollisionType, Scene, Vector, vec } from "excalibur";
-import { Wall } from "../actors/Wall";
+import { Actor, CollisionType, Scene, Vector, vec } from "excalibur";
+import { Wall, TipoParede } from "../actors/Wall";
 
 export type Obstaculo = { x: number; y: number; w: number; h: number };
 
@@ -36,7 +36,6 @@ export class Room {
   private largura = 800;
   private altura = 600;
   private espessura = 32;
-  private corObstaculo = Color.fromHex("#4a3a55");
 
   // Cria as paredes (com um buraco de porta na direita) e os obstáculos da sala.
   // Devolve tudo que foi criado pra GameScene poder apagar na troca de sala.
@@ -46,8 +45,8 @@ export class Room {
     const t = this.espessura;
     const paredes: Wall[] = [];
 
-    const criar = (x: number, y: number, largura: number, altura: number, cor?: Color): Wall => {
-      const parede = new Wall(x, y, largura, altura, cor);
+    const criar = (x: number, y: number, largura: number, altura: number, tipo: TipoParede = "parede"): Wall => {
+      const parede = new Wall(x, y, largura, altura, tipo);
       scene.add(parede);
       paredes.push(parede);
       return parede;
@@ -62,13 +61,13 @@ export class Room {
     criar(w - t / 2, 136, t, 208); // parte de cima
     criar(w - t / 2, 464, t, 208); // parte de baixo
 
-    // A porta fecha o buraco (laranja) e some quando todos os robôs morrem
-    const porta = criar(w - t / 2, 300, t, 120, Color.Orange);
+    // A porta fecha o buraco (madeira) e some quando todos os robôs morrem
+    const porta = criar(w - t / 2, 300, t, 120, "porta");
 
     // Obstáculos da sala
     const obstaculos = LAYOUTS[(sala - 1) % LAYOUTS.length];
     for (const o of obstaculos) {
-      criar(o.x, o.y, o.w, o.h, this.corObstaculo);
+      criar(o.x, o.y, o.w, o.h, "obstaculo");
     }
 
     return { paredes, porta, obstaculos };

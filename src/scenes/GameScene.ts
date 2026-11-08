@@ -1,4 +1,5 @@
 import { Actor, BaseAlign, Color, Engine, Font, Label, Scene, TextAlign, vec } from "excalibur";
+import { Resources } from "../resources";
 import { Player } from "../actors/Player";
 import { Robot } from "../actors/Robot";
 import { Wall } from "../actors/Wall";
@@ -9,6 +10,7 @@ export class GameScene extends Scene {
   private player!: Player;
   private room!: Room;
   private hud!: Label;
+  private chao!: Actor;
   private sala = 1;
   private entidadesSala: Actor[] = []; // paredes e robôs da sala atual
   private robos: Robot[] = [];
@@ -19,6 +21,13 @@ export class GameScene extends Scene {
   // Roda apenas uma vez ao carregar a cena
   public override onInitialize(engine: Engine) {
     this.room = new Room();
+
+    // Piso: um actor atrás de tudo, cobrindo a sala inteira
+    const spriteChao = Resources.Chao.toSprite();
+    spriteChao.scale = vec(800 / spriteChao.width, 600 / spriteChao.height);
+    this.chao = new Actor({ pos: vec(400, 300), z: -10 });
+    this.chao.graphics.use(spriteChao);
+    this.add(this.chao);
 
     // Texto do topo (fica por cima da parede de cima)
     this.hud = new Label({
@@ -43,7 +52,7 @@ export class GameScene extends Scene {
   // Zera tudo e começa na sala 1
   private novoJogo(): void {
     for (const a of [...this.actors]) {
-      if (a !== this.hud) a.kill();
+      if (a !== this.hud && a !== this.chao) a.kill();
     }
     this.entidadesSala = [];
     this.robos = [];
