@@ -1,4 +1,4 @@
-import { Actor, Collider, CollisionContact, Engine, Side, vec, Keys} from "excalibur";
+import { Actor, Collider, CollisionContact, CollisionType, Engine, Side, vec, Keys} from "excalibur";
 import { Resources } from "../resources";
 import { Projectile } from "./Projectile";
 
@@ -28,10 +28,10 @@ export class Player extends Actor {
       // Firefox: https://addons.mozilla.org/en-US/firefox/addon/excalibur-dev-tools/
       name: 'Player',
       pos: vec(150, 150),
-      width: 100,
-      height: 100,
+      width: 50,
+      height: 50,
       // anchor: vec(0, 0), // Actors default center colliders and graphics with anchor (0.5, 0.5)
-      // collisionType: CollisionType.Active, // Collision Type Active means this participates in collisions read more https://excaliburjs.com/docs/collisiontypes
+      collisionType: CollisionType.Active, // Active: participa das colisões e é barrado pelas paredes
     });
     
   }
