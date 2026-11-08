@@ -1,4 +1,5 @@
 import { Scene, Engine } from "excalibur";
+import { Robot } from "../actors/Robot";
 import { Player } from "../actors/Player";
 import { Room } from "../maps/Room";
 
@@ -13,6 +14,7 @@ export class GameScene extends Scene {
 
     this.player = new Player();
     this.add(this.player);
+    this.add(new Robot(100, 100, this.player));
   }
 
   // Roda toda vez que a cena se torna ativa
