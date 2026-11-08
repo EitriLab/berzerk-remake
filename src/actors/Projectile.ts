@@ -1,4 +1,5 @@
-import { Actor, Color, Engine, Vector } from "excalibur";
+import { Actor, Collider, CollisionContact, CollisionType, Color, Engine, Side, Vector } from "excalibur";
+import { Wall } from "./Wall";
 
 export class Projectile extends Actor {
   constructor(pos: Vector, direcao: Vector) {
@@ -8,8 +9,15 @@ export class Projectile extends Actor {
       width: 10,
       height: 10,
       color: Color.Yellow,
+      collisionType: CollisionType.Passive,
     });
     this.vel = direcao.scale(500); // pixels por segundo
+  }
+
+  override onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {
+    if (other.owner instanceof Wall) {
+      this.kill();
+    }
   }
 
   override onPostUpdate(engine: Engine): void {
