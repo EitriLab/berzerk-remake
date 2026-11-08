@@ -1,6 +1,8 @@
 import { Color, DisplayMode, Engine, FadeInOut } from "excalibur";
 import { loader } from "./resources";
+import { MenuScene } from "./scenes/MenuScene";
 import { GameScene } from "./scenes/GameScene";
+import { GameOverScene } from "./scenes/GameOverScene";
 
 // Goal is to keep main.ts small and just enough to configure the engine
 
@@ -10,7 +12,9 @@ const game = new Engine({
   displayMode: DisplayMode.FitScreenAndFill, // Display mode tells excalibur how to fill the window
   pixelArt: true, // pixelArt will turn on the correct settings to render pixel art without jaggies or shimmering artifacts
   scenes: {
-    start: GameScene
+    menu: MenuScene,
+    game: GameScene,
+    gameover: GameOverScene
   },
   // physics: {
   //   solver: SolverStrategy.Realistic,
@@ -19,7 +23,7 @@ const game = new Engine({
   // fixedUpdateTimestep: 16 // Turn on fixed update timestep when consistent physic simulation is important
 });
 
-game.start('start', { // name of the start scene 'start'
+game.start('menu', { // name of the start scene 'menu'
   loader, // Optional loader (but needed for loading images/sounds)
   inTransition: new FadeInOut({ // Optional in transition
     duration: 1000,
