@@ -1,46 +1,44 @@
 import { Actor, Collider, CollisionContact, CollisionType, Engine, Side, vec, Keys} from "excalibur";
 import { Resources } from "../resources";
 import { Projectile } from "./Projectile";
-
-// Actors are the main unit of composition you'll likely use, anything that you want to draw and move around the screen
-// is likely built with an actor
-
-// They contain a bunch of useful components that you might use
-// actor.transform
-// actor.motion
-// actor.graphics
-// actor.body
-// actor.collider
-// actor.actions
-// actor.pointer
-
+import { Robot } from "./Robot";
 
 export class Player extends Actor {
   private velocidade = 200;
   private direcaoOlhando = vec(1, 0); // pra onde o jogador está virado
   private recarga = 0;                // tempo até poder atirar de novo (ms)
+  private invulneravel = 0;           // tempo restante sem poder levar dano (ms)
+  public vida = 3;
 
   constructor() {
     super({
-      // Giving your actor a name is optional, but helps in debugging using the dev tools or debug mode
-      // https://github.com/excaliburjs/excalibur-extension/
-      // Chrome: https://chromewebstore.google.com/detail/excalibur-dev-tools/dinddaeielhddflijbbcmpefamfffekc
-      // Firefox: https://addons.mozilla.org/en-US/firefox/addon/excalibur-dev-tools/
       name: 'Player',
       pos: vec(150, 150),
       width: 50,
       height: 50,
-      // anchor: vec(0, 0), // Actors default center colliders and graphics with anchor (0.5, 0.5)
       collisionType: CollisionType.Active, // Active: participa das colisões e é barrado pelas paredes
     });
-    
   }
 
   override onInitialize() {
-    this.graphics.add(Resources.Sword.toSprite());
+    const sprite = Resources.Sword.toSprite();
+    // encolhe/estica a imagem pra ficar do tamanho do collider (50x50)
+    sprite.scale = vec(50 / sprite.width, 50 / sprite.height);
+    this.graphics.add(sprite);
   }
 
- override onPreUpdate(engine: Engine, elapsedMs: number): void {
+  public receberDano(): void {
+    if (this.invulneravel > 0) return; // ainda protegido, ignora
+
+    this.vida -= 1;
+    this.invulneravel = 1000; // 1 segundo de proteção
+
+    if (this.vida <= 0) {
+      this.kill();
+    }
+  }
+
+  override onPreUpdate(engine: Engine, elapsedMs: number): void {
     const teclado = engine.input.keyboard;
 
     let x = 0;
@@ -79,6 +77,14 @@ export class Player extends Actor {
       this.scene?.add(new Projectile(this.pos.clone(), this.direcaoOlhando));
       this.recarga = 250; // 4 tiros por segundo
     }
+
+    // Contagem da invulnerabilidade + efeito de piscar
+    if (this.invulneravel > 0) {
+      this.invulneravel -= elapsedMs;
+      this.graphics.opacity = Math.floor(this.invulneravel / 100) % 2 === 0 ? 0.3 : 1;
+    } else {
+      this.graphics.opacity = 1;
+    }
   }
 
   override onPostUpdate(engine: Engine, elapsedMs: number): void {
@@ -90,7 +96,10 @@ export class Player extends Actor {
   }
 
   override onPostCollisionResolve(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {
-    // Called every time a collision is resolved and overlap is solved
+    // Roda todo frame enquanto está encostando: se for um robô, leva dano
+    if (other.owner instanceof Robot) {
+      this.receberDano();
+    }
   }
 
   override onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {

@@ -1,7 +1,7 @@
 import { Actor, CollisionType, Color, Engine, vec } from "excalibur";
 
 export class Robot extends Actor {
-  private alvo: Actor;        // quem o robô persegue (o player)
+  private alvo: Actor; // quem o robô persegue (o player)
   private velocidade: number;
 
   constructor(x: number, y: number, alvo: Actor, velocidade: number = 80) {
