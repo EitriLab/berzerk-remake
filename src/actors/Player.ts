@@ -1,5 +1,6 @@
 import { Actor, Collider, CollisionContact, Engine, Side, vec, Keys} from "excalibur";
 import { Resources } from "../resources";
+import { Projectile } from "./Projectile";
 
 // Actors are the main unit of composition you'll likely use, anything that you want to draw and move around the screen
 // is likely built with an actor
@@ -16,6 +17,8 @@ import { Resources } from "../resources";
 
 export class Player extends Actor {
   private velocidade = 200;
+  private direcaoOlhando = vec(1, 0); // pra onde o jogador está virado
+  private recarga = 0;                // tempo até poder atirar de novo (ms)
 
   constructor() {
     super({
@@ -61,11 +64,21 @@ export class Player extends Actor {
       x += 1;
     }
 
-    // Normaliza a velocidade diagonal
-    const direcao = vec(x, y).normalize();
+    // Só normaliza e move se alguma tecla estiver apertada
+    if (x !== 0 || y !== 0) {
+      const direcao = vec(x, y).normalize();
+      this.vel = direcao.scale(this.velocidade);
+      this.direcaoOlhando = direcao; // lembra pra onde está virado
+    } else {
+      this.vel = vec(0, 0);
+    }
 
-    // Aplica a velocidade
-    this.vel = direcao.scale(this.velocidade);
+    // Disparo com espaço
+    this.recarga -= elapsedMs;
+    if (teclado.isHeld(Keys.Space) && this.recarga <= 0) {
+      this.scene?.add(new Projectile(this.pos.clone(), this.direcaoOlhando));
+      this.recarga = 250; // 4 tiros por segundo
+    }
   }
 
   override onPostUpdate(engine: Engine, elapsedMs: number): void {
