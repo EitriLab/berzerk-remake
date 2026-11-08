@@ -1,6 +1,7 @@
 import { Actor, Collider, CollisionContact, CollisionType, Color, Engine, Side, Vector } from "excalibur";
 import { Wall } from "./Wall";
-import { Robot } from "./Robot"; // Importado para a Issue #8
+import { Robot } from "./Robot";
+import { Placar } from "../systems/Placar";
 
 export class Projectile extends Actor {
   constructor(pos: Vector, direcao: Vector) {
@@ -10,28 +11,27 @@ export class Projectile extends Actor {
       width: 10,
       height: 10,
       color: Color.Yellow,
-      collisionType: CollisionType.Passive, // Avisa quando bate, mas não sofre impacto físico
+      collisionType: CollisionType.Passive, // avisa quando bate, mas não é empurrado
     });
-    this.vel = direcao.scale(500); // Velocidade do tiro (Issue #11)
+    this.vel = direcao.scale(500); // pixels por segundo
   }
 
   override onPostUpdate(engine: Engine): void {
-    // Se o projétil sair dos limites da tela (800x600), ele é destruído (Issue #11)
+    // saiu da tela (800x600)? some do jogo
     if (this.pos.x < 0 || this.pos.x > 800 || this.pos.y < 0 || this.pos.y > 600) {
       this.kill();
     }
   }
 
   override onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {
-    // Se colidir com uma parede, a bala some (Issue #11)
     if (other.owner instanceof Wall) {
       this.kill();
     }
 
-    // Se colidir com um robô, destrói o inimigo e some com a bala (Issue #8)
     if (other.owner instanceof Robot) {
-      other.owner.kill(); 
-      this.kill();        
+      other.owner.kill(); // mata o robô
+      Placar.pontos += 100; // e soma pontos
+      this.kill();        // e a bala some
     }
   }
 }
