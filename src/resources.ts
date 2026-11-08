@@ -1,10 +1,12 @@
 import { ImageSource, Loader } from "excalibur";
 import swordPath from "./images/sword.png"; // for rollup this is configured using the image() plugin
+import vampiroPath from "./images/vampiro.png";
 
 
 // It is convenient to put your resources in one place
 export const Resources = {
-  Sword: new ImageSource(swordPath) // Final bundled/optimized path from rollup
+  Sword: new ImageSource(swordPath), // Final bundled/optimized path from rollup
+  Vampiro: new ImageSource(vampiroPath)
 } as const; // the 'as const' is a neat typescript trick to get strong typing on your resources. 
 // So when you type Resources.Sword -> ImageSource
 
