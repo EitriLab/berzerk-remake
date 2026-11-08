@@ -1,11 +1,22 @@
 import { DefaultLoader, Engine, ExcaliburGraphicsContext, Scene, SceneActivationContext } from "excalibur";
 import { Player } from "../actors/Player";
+import { Wall } from "../actors/Wall";
 
 export class MyLevel extends Scene {
     override onInitialize(engine: Engine): void {
         // Scene.onInitialize is where we recommend you perform the composition for your game
         const player = new Player();
         this.add(player); // Actors need to be added to a scene to be drawn
+
+        // Paredes da borda (sala de 800x600). Parâmetros: x e y do CENTRO, largura, altura
+        this.add(new Wall(400, 10, 800, 20));   // cima
+        this.add(new Wall(400, 590, 800, 20));  // baixo
+        this.add(new Wall(10, 300, 20, 600));   // esquerda
+        this.add(new Wall(790, 300, 20, 600));  // direita
+
+        // Obstáculos no meio (estilo labirinto do Berzerk)
+        this.add(new Wall(300, 250, 20, 200));
+        this.add(new Wall(550, 400, 200, 20));
     }
 
     override onPreLoad(loader: DefaultLoader): void {
