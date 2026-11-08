@@ -1,6 +1,7 @@
 import { DefaultLoader, Engine, ExcaliburGraphicsContext, Scene, SceneActivationContext } from "excalibur";
 import { Player } from "../actors/Player";
 import { Wall } from "../actors/Wall";
+import { Robot } from "../actors/Robot";
 
 export class MyLevel extends Scene {
     override onInitialize(engine: Engine): void {
@@ -17,6 +18,11 @@ export class MyLevel extends Scene {
         // Obstáculos no meio (estilo labirinto do Berzerk)
         this.add(new Wall(300, 250, 20, 200));
         this.add(new Wall(550, 400, 200, 20));
+
+        // Robôs inimigos (recebem o player como alvo)
+        this.add(new Robot(650, 100, player));
+        this.add(new Robot(650, 500, player));
+        this.add(new Robot(400, 500, player));
     }
 
     override onPreLoad(loader: DefaultLoader): void {
