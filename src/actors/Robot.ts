@@ -1,8 +1,10 @@
 import { Actor, CollisionType, Color, Engine, vec } from "excalibur";
+import { EnemyProjectile } from "./EnemyProjectile";
 
 export class Robot extends Actor {
   private alvo: Actor; // quem o robô persegue (o player)
   private velocidade: number;
+  private recarga: number; // tempo até o próximo tiro (ms)
 
   constructor(x: number, y: number, alvo: Actor, velocidade: number = 80) {
     super({
@@ -15,6 +17,7 @@ export class Robot extends Actor {
     });
     this.alvo = alvo;
     this.velocidade = velocidade;
+    this.recarga = 1500 + Math.random() * 2000; // cada robô começa num tempo diferente
   }
 
   override onPreUpdate(engine: Engine, elapsedMs: number): void {
@@ -25,6 +28,16 @@ export class Robot extends Actor {
       this.vel = ate.normalize().scale(this.velocidade);
     } else {
       this.vel = vec(0, 0);
+    }
+
+    // atira em direção ao jogador de tempos em tempos
+    this.recarga -= elapsedMs;
+    if (this.recarga <= 0 && ate.size > 1) {
+      const direcao = ate.normalize();
+      // nasce um pouco à frente do robô, pra não nascer dentro dele
+      const origem = this.pos.add(direcao.scale(30));
+      this.scene?.add(new EnemyProjectile(origem, direcao));
+      this.recarga = 2000 + Math.random() * 2000; // próximo tiro em 2 a 4 segundos
     }
   }
 }
