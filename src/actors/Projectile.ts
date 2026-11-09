@@ -2,6 +2,7 @@ import { Actor, Collider, CollisionContact, CollisionType, Color, Engine, Side, 
 import { Wall } from "./Wall";
 import { Robot } from "./Robot";
 import { Placar } from "../systems/Placar";
+import { Moeda } from "./Moeda"; // Adicionado o import da moeda coletável
 
 export class Projectile extends Actor {
   constructor(pos: Vector, direcao: Vector) {
@@ -29,8 +30,15 @@ export class Projectile extends Actor {
     }
 
     if (other.owner instanceof Robot) {
+      const posicaoMorte = other.owner.pos.clone(); // Guarda as coordenadas da morte do vampiro
       other.owner.kill(); // mata o robô
       Placar.pontos += 100; // e soma pontos
+      
+      // 50% de chance de dropar uma moeda de ouro para gastar na loja
+      if (Math.random() > 0.5) {
+        this.scene?.add(new Moeda(posicaoMorte.x, posicaoMorte.y));
+      }
+
       this.kill();        // e a bala some
     }
   }
