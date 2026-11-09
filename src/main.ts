@@ -3,6 +3,8 @@ import { loader } from "./resources";
 import { MenuScene } from "./scenes/MenuScene";
 import { GameScene } from "./scenes/GameScene";
 import { GameOverScene } from "./scenes/GameOverScene";
+import { ShopScene } from "./scenes/ShopScene";
+
 
 // Goal is to keep main.ts small and just enough to configure the engine
 
@@ -12,11 +14,13 @@ const game = new Engine({
   backgroundColor: Color.fromHex("#0d0a10"), // fundo fora do mapa (quase preto)
   displayMode: DisplayMode.FitScreenAndFill, // Display mode tells excalibur how to fill the window
   pixelArt: true, // pixelArt will turn on the correct settings to render pixel art without jaggies or shimmering artifacts
-  scenes: {
+    scenes: {
     menu: MenuScene,
     game: GameScene,
-    gameover: GameOverScene
+    gameover: GameOverScene,
+    loja: ShopScene
   },
+
   // physics: {
   //   solver: SolverStrategy.Realistic,
   //   substep: 5 // Sub step the physics simulation for more robust simulations
