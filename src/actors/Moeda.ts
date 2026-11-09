@@ -1,4 +1,4 @@
-import { Actor, Collider, CollisionContact, CollisionType, Color, Side, vec } from "excalibur";
+import { Actor, Collider, CollisionContact, CollisionType, Color, Side, vec, Rectangle } from "excalibur";
 import { Player } from "./Player";
 import { Placar } from "../systems/Placar";
 
@@ -7,24 +7,30 @@ export class Moeda extends Actor {
     super({
       name: "Moeda",
       pos: vec(x, y),
-      width: 24, // Um pouco maior para facilitar o contato físico do Player
-      height: 24,
-      color: Color.Yellow, 
-      collisionType: CollisionType.Passive, // Passivo para não empurrar ou bloquear o jogador
-      z: 15 // Força total para ficar acima de absolutamente tudo (inclusive do HUD e do chão)
+      width: 16,
+      height: 16,
+      collisionType: CollisionType.Passive,
+      z: 50 // Garante que fica muito acima do chão (-10) e dos inimigos
     });
   }
 
   override onInitialize() {
-    console.log(`Moeda spawnada com sucesso na posição X: ${this.pos.x}, Y: ${this.pos.y}`);
+    // Força o Excalibur a desenhar um quadrado amarelo puro na camada gráfica superior
+    const desenhoMoeda = new Rectangle({
+      width: 16,
+      height: 16,
+      color: Color.Yellow
+    });
+    
+    this.graphics.add(desenhoMoeda);
+    console.log(`Moeda renderizada visualmente em X: ${this.pos.x}, Y: ${this.pos.y}`);
   }
 
   override onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {
-    // Verifica se quem encostou foi o Player de fato
     if (other.owner instanceof Player || other.owner.name === "Player") {
       Placar.moedas += 1;
-      console.log(`Moeda Coletada! Carteira atual: ${Placar.moedas}`);
-      this.kill(); // Remove do cenário
+      console.log(`Moeda Coletada! Total na carteira: ${Placar.moedas}`);
+      this.kill(); 
     }
   }
 }
