@@ -7,18 +7,18 @@ export class Moeda extends Actor {
     super({
       name: "Moeda",
       pos: vec(x, y),
-      width: 16,
-      height: 16,
-      color: Color.Yellow, // Quadrado amarelo representando a moeda de ouro
-      collisionType: CollisionType.Passive, // Só avisa colisão, sem empurrar o player
+      width: 20,
+      height: 20,
+      color: Color.Yellow, // Quadrado amarelo brilhante
+      collisionType: CollisionType.Passive,
+      z: 10 // FORÇA a moeda a nascer POR CIMA do chão e das paredes
     });
   }
 
   override onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {
-    // Se o Player encostar na moeda
     if (other.owner instanceof Player) {
-      Placar.moedas += 1; // Soma +1 moeda na carteira da Loja
-      this.kill(); // A moeda some do cenário de jogo
+      Placar.moedas += 1;
+      this.kill(); // Some ao coletar
     }
   }
 }
