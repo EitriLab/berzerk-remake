@@ -1,4 +1,11 @@
-// Guarda a pontuação do jogo. "static" = existe uma só, acessível de qualquer arquivo
 export class Placar {
-  static pontos = 0;
+  public static pontos: number = 0;
+  public static moedas: number = 0; // Guarda as moedas para gastar na loja
+
+  // Upgrades que serão comprados na loja e aplicados ao jogador
+  public static upgradeVelocidade: number = 0; 
+  public static vidaMaxima: number = 3;       
+
+  // Variável de controle global para congelar as ações do jogo de fundo
+  public static jogoPausado: boolean = false; 
 }
